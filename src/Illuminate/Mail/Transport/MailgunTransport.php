@@ -73,10 +73,11 @@ class MailgunTransport implements Swift_Transport {
 	{
 		$client = $this->getHttpClient();
 
+        return $this->client->post($this->url, $options);
 		$client->post($this->url, ['auth' => ['api', $this->key],
-			'body' => [
-				'to' => $this->getTo($message),
-				'message' => new PostFile('message', (string) $message),
+			'multipart' => [
+				['name' => 'to', 'contents' => $to],
+				['name' => 'message', 'contents' => $message->toString(), 'filename' => 'message.mime'],
 			],
 		]);
 	}
